@@ -86,6 +86,22 @@ Open docs:
    
    The app automatically loads variables from both `.env` and `.env.local` with `.env.local` taking precedence.
 
+## Load Environment Variables in Shell
+
+For GitHub MCP, shell scripts, or manual commands that need credentials:
+
+```bash
+source scripts/setup_env.zsh
+```
+
+This loads `GITHUB_PERSONAL_ACCESS_TOKEN` and IBKR credentials into your current shell.
+
+**When to use:**
+- ✅ Before using GitHub MCP in VS Code
+- ✅ Before running shell scripts with credentials  
+- ✅ Before manual curl/API calls
+- ❌ NOT needed for running the FastAPI app (automatic)
+
 ## Run Tests
 
 ```bash
@@ -101,23 +117,17 @@ This project includes a VS Code MCP server config at `.vscode/mcp.json` for GitH
 - Go to GitHub settings and create a token with the minimum scopes you need.
 - Typical MVP scopes: `repo` and `read:org`.
 
-### 2) Export token in your shell
+### 2) Load credentials in your shell
 
-```bash
-export GITHUB_PERSONAL_ACCESS_TOKEN="your_token_here"
-```
-
-You can also place it in your local environment management flow based on `.env.example`.
-
-For this workspace, a local helper is included:
+For this workspace, use the environment setup helper:
 
 ```bash
 cp .env.local.example .env.local
 # edit .env.local and set GITHUB_PERSONAL_ACCESS_TOKEN
-source scripts/load_github_mcp_token.zsh
+source scripts/setup_env.zsh
 ```
 
-`.env.local` is gitignored to keep your token out of version control.
+This loads your GitHub token and IBKR credentials from `.env.local` into the shell (gitignored for security).
 
 ### 3) Ensure Node.js is available
 

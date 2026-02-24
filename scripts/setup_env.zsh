@@ -1,6 +1,16 @@
 #!/usr/bin/env zsh
+# Setup environment variables from .env and .env.local
+# 
+# USAGE: source scripts/setup_env.zsh
+#
+# When to use:
+# - Before using GitHub MCP (VS Code integration)
+# - Before running shell scripts that need credentials
+# - Before using curls/API calls that need auth tokens
+#
+# Does NOT need to be called for FastAPI app (it auto-loads .env files)
 
-load_local_env_vars() {
+setup_env() {
   emulate -L zsh
   set -euo pipefail
 
@@ -67,4 +77,4 @@ load_local_env_vars() {
   return 0
 }
 
-load_local_env_vars "$@"
+setup_env "$@"
