@@ -1,0 +1,13 @@
+.venv/
+.pytest_cache/
+.env.local
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VS Code workspace file (local only)
+being-rich-assistant.code-workspace
+# or ignore all workspace files:
+# *.code-workspace
