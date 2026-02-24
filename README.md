@@ -11,7 +11,7 @@ Simple FastAPI MVP for real stock data and basic price analytics.
 ## Tech Stack
 
 - FastAPI
-- yfinance
+- ib_insync (Interactive Brokers API)
 - pandas / numpy
 - pytest
 
@@ -43,7 +43,8 @@ Open docs:
 ## Notes
 
 - Market data is fetched on demand (no DB/cache in this MVP).
-- Data source is `yfinance`; availability can vary depending on upstream Yahoo Finance responses.
+- Data source is `Interactive Brokers (IBKR) API` via `ib_insync`. Requires TWS (Trader Workstation) or IB Gateway to be running locally.
+- Ensure your IBKR_HOST and IBKR_PORT settings match your TWS/Gateway configuration (.env file).
 
 ## Run Tests
 

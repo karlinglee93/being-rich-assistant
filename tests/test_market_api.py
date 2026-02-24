@@ -4,7 +4,6 @@ import pandas as pd
 import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
-from yfinance.exceptions import YFRateLimitError
 
 from app.main import app
 from app.services.market_data import MarketDataService
@@ -60,43 +59,29 @@ def test_get_history_mocked(monkeypatch) -> None:
     assert payload["points"][0]["close"] == 101.0
 
 
-def test_market_data_service_get_history_date_range_inclusive(monkeypatch) -> None:
-    class _MockTicker:
-        def history(self, start: str, end: str):
-            assert start == "2026-02-01"
-            assert end == "2026-02-04"
-            return pd.DataFrame(
-                {
-                    "Open": [100.0],
-                    "High": [101.0],
-                    "Low": [99.0],
-                    "Close": [100.5],
-                    "Volume": [1000000],
-                },
-                index=pd.to_datetime(["2026-02-03"]),
-            )
-
-    monkeypatch.setattr("app.services.market_data.yf.Ticker", lambda ticker: _MockTicker())
-
+def test_market_data_service_get_history_date_range_validation(monkeypatch) -> None:
+    """Test that get_history validates date ranges"""
     service = MarketDataService()
-    data = service.get_history("AAPL", date(2026, 2, 1), date(2026, 2, 3))
 
-    assert not data.empty
-    assert float(data.iloc[0]["Close"]) == 100.5
+    def mock_get_connection(self):
+        return None
 
+    monkeypatch.setattr(MarketDataService, "_get_connection", mock_get_connection)
 
-def test_market_data_service_get_history_rate_limit_returns_http_error(monkeypatch) -> None:
-    class _MockTicker:
-        def history(self, start: str, end: str):
-            raise YFRateLimitError()
-
-    monkeypatch.setattr("app.services.market_data.yf.Ticker", lambda ticker: _MockTicker())
-
-    service = MarketDataService()
     with pytest.raises(HTTPException) as exc_info:
-        service.get_history("AAPL", date(2026, 2, 1), date(2026, 2, 3))
+        service.get_history("AAPL", date(2026, 2, 3), date(2026, 2, 1))
 
-    assert exc_info.value.status_code == 503
+    assert exc_info.value.status_code == 400
+
+
+def test_market_data_service_empty_ticker_returns_error(monkeypatch) -> None:
+    """Test that empty ticker raises error"""
+    service = MarketDataService()
+
+    with pytest.raises(HTTPException) as exc_info:
+        service.get_latest_price("")
+
+    assert exc_info.value.status_code == 400
 
 
 def test_get_analytics_summary_mocked(monkeypatch) -> None:

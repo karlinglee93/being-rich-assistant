@@ -1,8 +1,8 @@
 fastapi==0.115.8
 uvicorn[standard]==0.34.0
-yfinance==0.2.54
+ib_insync==0.9.86
 pandas==2.2.3
-numpy==2.2.3
+numpy<2,>=1.23
 pydantic==2.10.6
 pydantic-settings==2.8.0
 python-dotenv==1.0.1
