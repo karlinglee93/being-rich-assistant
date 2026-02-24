@@ -13,7 +13,32 @@ class Settings(BaseSettings):
         alias="IBKR_BASE_URL",
     )
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
+
+# Load environment from both .env and .env.local (local overrides)
+def _load_env_files():
+    """Load environment variables from .env and .env.local files."""
+    from pathlib import Path
+
+    from dotenv import load_dotenv
+
+    # Load .env first (public config)
+    env_file = Path(".env")
+    if env_file.exists():
+        load_dotenv(env_file, override=False)
+
+    # Load .env.local second (local secrets override)
+    env_local_file = Path(".env.local")
+    if env_local_file.exists():
+        load_dotenv(env_local_file, override=True)
+
+
+# Load env files before creating settings instance
+_load_env_files()
 
 settings = Settings()

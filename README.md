@@ -47,11 +47,23 @@ Open docs:
 - No local services required - pure HTTP API calls.
 - Requires valid IBKR API credentials configured in `.env`.
 
-## Setup IBKR API Credentials
+## Environment Configuration
 
-1. **Create `.env.local` from `.env.example`**:
+### File Structure
+- **`.env`** - Public configuration (safe to commit)
+  - Contains default values for `APP_NAME`, `APP_VERSION`, `IBKR_BASE_URL`
+  - Never contains secrets
+  
+- **`.env.local`** - Local secrets (gitignored, never committed)
+  - Contains your actual IBKR API credentials
+  - Contains GitHub personal access token (if using MCP)
+  - Copy from `.env.local.example` and fill in your values
+
+### Setup IBKR API Credentials
+
+1. **Create `.env.local` from `.env.local.example`**:
    ```bash
-   cp .env.example .env.local
+   cp .env.local.example .env.local
    ```
 
 2. **Get IBKR API credentials**:
@@ -59,12 +71,12 @@ Open docs:
    - Generate API Key and Secret
    - Note your Account ID (e.g., `U12345678`)
 
-3. **Add credentials to `.env.local`** (never commit this file):
+3. **Edit `.env.local`** (never commit this file):
    ```env
-   # .env.local
-   IBKR_API_KEY=your_api_key_here
-   IBKR_API_SECRET=your_api_secret_here
-   IBKR_ACCOUNT_ID=your_account_id_here
+   IBKR_API_KEY=your_actual_api_key
+   IBKR_API_SECRET=your_actual_api_secret
+   IBKR_ACCOUNT_ID=your_account_id
+   GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token  # optional
    ```
 
 4. **Run the API**:
@@ -72,7 +84,7 @@ Open docs:
    uvicorn app.main:app --reload
    ```
    
-   Note: `.env.local` is gitignored and not committed to version control.
+   The app automatically loads variables from both `.env` and `.env.local` with `.env.local` taking precedence.
 
 ## Run Tests
 
