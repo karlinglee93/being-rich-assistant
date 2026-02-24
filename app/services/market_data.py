@@ -1,8 +1,9 @@
-from datetime import date
+from datetime import date, timedelta
 
 import pandas as pd
 import yfinance as yf
 from fastapi import HTTPException, status
+from yfinance.exceptions import YFRateLimitError
 
 
 class MarketDataService:
@@ -12,7 +13,18 @@ class MarketDataService:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ticker is required")
 
         stock = yf.Ticker(normalized_ticker)
-        history = stock.history(period="5d")
+        try:
+            history = stock.history(period="5d")
+        except YFRateLimitError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Market data provider rate limit reached. Please retry shortly.",
+            ) from exc
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="Failed to fetch market data from provider.",
+            ) from exc
         if history.empty:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No data for ticker {normalized_ticker}")
 
@@ -31,7 +43,19 @@ class MarketDataService:
             )
 
         stock = yf.Ticker(normalized_ticker)
-        data = stock.history(start=start_date.isoformat(), end=(end_date + pd.Timedelta(days=1)).date().isoformat())
+        end_exclusive = end_date + timedelta(days=1)
+        try:
+            data = stock.history(start=start_date.isoformat(), end=end_exclusive.isoformat())
+        except YFRateLimitError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Market data provider rate limit reached. Please retry shortly.",
+            ) from exc
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="Failed to fetch market data from provider.",
+            ) from exc
         if data.empty:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
