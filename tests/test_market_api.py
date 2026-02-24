@@ -61,12 +61,15 @@ def test_get_history_mocked(monkeypatch) -> None:
 
 def test_market_data_service_get_history_date_range_validation(monkeypatch) -> None:
     """Test that get_history validates date ranges"""
+    # Mock the constructor to avoid credential errors
+    def mock_init(self):
+        self.base_url = "https://api.example.com"
+        self.api_key = "test_key"
+        self.api_secret = "test_secret"
+        self.account_id = "test_account"
+
+    monkeypatch.setattr(MarketDataService, "__init__", mock_init)
     service = MarketDataService()
-
-    def mock_get_connection(self):
-        return None
-
-    monkeypatch.setattr(MarketDataService, "_get_connection", mock_get_connection)
 
     with pytest.raises(HTTPException) as exc_info:
         service.get_history("AAPL", date(2026, 2, 3), date(2026, 2, 1))
@@ -76,6 +79,14 @@ def test_market_data_service_get_history_date_range_validation(monkeypatch) -> N
 
 def test_market_data_service_empty_ticker_returns_error(monkeypatch) -> None:
     """Test that empty ticker raises error"""
+    # Mock the constructor to avoid credential errors
+    def mock_init(self):
+        self.base_url = "https://api.example.com"
+        self.api_key = "test_key"
+        self.api_secret = "test_secret"
+        self.account_id = "test_account"
+
+    monkeypatch.setattr(MarketDataService, "__init__", mock_init)
     service = MarketDataService()
 
     with pytest.raises(HTTPException) as exc_info:

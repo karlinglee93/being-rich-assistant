@@ -1,6 +1,7 @@
 .venv/
 .pytest_cache/
 .env.local
+.env
 
 # Python bytecode
 __pycache__/

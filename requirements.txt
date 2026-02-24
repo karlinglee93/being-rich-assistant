@@ -1,6 +1,6 @@
 fastapi==0.115.8
 uvicorn[standard]==0.34.0
-ib_insync==0.9.86
+requests==2.31.0
 pandas==2.2.3
 numpy<2,>=1.23
 pydantic==2.10.6

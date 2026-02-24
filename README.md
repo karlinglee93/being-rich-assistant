@@ -11,8 +11,8 @@ Simple FastAPI MVP for real stock data and basic price analytics.
 ## Tech Stack
 
 - FastAPI
-- ib_insync (Interactive Brokers API)
-- pandas / numpy
+- Interactive Brokers REST API (token-based)
+- requests / pandas / numpy
 - pytest
 
 ## Quick Start
@@ -43,8 +43,36 @@ Open docs:
 ## Notes
 
 - Market data is fetched on demand (no DB/cache in this MVP).
-- Data source is `Interactive Brokers (IBKR) API` via `ib_insync`. Requires TWS (Trader Workstation) or IB Gateway to be running locally.
-- Ensure your IBKR_HOST and IBKR_PORT settings match your TWS/Gateway configuration (.env file).
+- Data source is `Interactive Brokers REST API` using token-based authentication.
+- No local services required - pure HTTP API calls.
+- Requires valid IBKR API credentials configured in `.env`.
+
+## Setup IBKR API Credentials
+
+1. **Create `.env.local` from `.env.example`**:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. **Get IBKR API credentials**:
+   - Visit [IBKR API Dashboard](https://www.interactivebrokers.com/en/trading/ibkr-apis.php)
+   - Generate API Key and Secret
+   - Note your Account ID (e.g., `U12345678`)
+
+3. **Add credentials to `.env.local`** (never commit this file):
+   ```env
+   # .env.local
+   IBKR_API_KEY=your_api_key_here
+   IBKR_API_SECRET=your_api_secret_here
+   IBKR_ACCOUNT_ID=your_account_id_here
+   ```
+
+4. **Run the API**:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+   
+   Note: `.env.local` is gitignored and not committed to version control.
 
 ## Run Tests
 
