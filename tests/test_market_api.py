@@ -65,8 +65,6 @@ def test_market_data_service_get_history_date_range_validation(monkeypatch) -> N
     def mock_init(self):
         self.base_url = "https://api.example.com"
         self.api_key = "test_key"
-        self.api_secret = "test_secret"
-        self.account_id = "test_account"
 
     monkeypatch.setattr(MarketDataService, "__init__", mock_init)
     service = MarketDataService()
@@ -83,8 +81,6 @@ def test_market_data_service_empty_ticker_returns_error(monkeypatch) -> None:
     def mock_init(self):
         self.base_url = "https://api.example.com"
         self.api_key = "test_key"
-        self.api_secret = "test_secret"
-        self.account_id = "test_account"
 
     monkeypatch.setattr(MarketDataService, "__init__", mock_init)
     service = MarketDataService()

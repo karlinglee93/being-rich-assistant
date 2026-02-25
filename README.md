@@ -11,7 +11,7 @@ Simple FastAPI MVP for real stock data and basic price analytics.
 ## Tech Stack
 
 - FastAPI
-- Interactive Brokers REST API (token-based)
+- Alpha Vantage REST API
 - requests / pandas / numpy
 - pytest
 
@@ -43,39 +43,36 @@ Open docs:
 ## Notes
 
 - Market data is fetched on demand (no DB/cache in this MVP).
-- Data source is `Interactive Brokers REST API` using token-based authentication.
+- Data source is `Alpha Vantage REST API`.
 - No local services required - pure HTTP API calls.
-- Requires valid IBKR API credentials configured in `.env`.
+- Requires a valid Alpha Vantage API key configured in `.env.local`.
 
 ## Environment Configuration
 
 ### File Structure
 - **`.env`** - Public configuration (safe to commit)
-  - Contains default values for `APP_NAME`, `APP_VERSION`, `IBKR_BASE_URL`
+   - Contains default values for `APP_NAME`, `APP_VERSION`, `ALPHA_VANTAGE_BASE_URL`
   - Never contains secrets
   
 - **`.env.local`** - Local secrets (gitignored, never committed)
-  - Contains your actual IBKR API credentials
+   - Contains your actual Alpha Vantage API key
   - Contains GitHub personal access token (if using MCP)
   - Copy from `.env.local.example` and fill in your values
 
-### Setup IBKR API Credentials
+### Setup Alpha Vantage API Credentials
 
 1. **Create `.env.local` from `.env.local.example`**:
    ```bash
    cp .env.local.example .env.local
    ```
 
-2. **Get IBKR API credentials**:
-   - Visit [IBKR API Dashboard](https://www.interactivebrokers.com/en/trading/ibkr-apis.php)
-   - Generate API Key and Secret
-   - Note your Account ID (e.g., `U12345678`)
+2. **Get an Alpha Vantage API key**:
+   - Visit [Alpha Vantage API Key](https://www.alphavantage.co/support/#api-key)
+   - Generate your free API key
 
 3. **Edit `.env.local`** (never commit this file):
    ```env
-   IBKR_API_KEY=your_actual_api_key
-   IBKR_API_SECRET=your_actual_api_secret
-   IBKR_ACCOUNT_ID=your_account_id
+   ALPHA_VANTAGE_API_KEY=your_actual_api_key
    GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token  # optional
    ```
 
@@ -94,7 +91,7 @@ For GitHub MCP, shell scripts, or manual commands that need credentials:
 source scripts/setup_env.zsh
 ```
 
-This loads `GITHUB_PERSONAL_ACCESS_TOKEN` and IBKR credentials into your current shell.
+This loads `GITHUB_PERSONAL_ACCESS_TOKEN` and Alpha Vantage credentials into your current shell.
 
 **When to use:**
 - ✅ Before using GitHub MCP in VS Code
@@ -127,7 +124,7 @@ cp .env.local.example .env.local
 source scripts/setup_env.zsh
 ```
 
-This loads your GitHub token and IBKR credentials from `.env.local` into the shell (gitignored for security).
+This loads your GitHub token and Alpha Vantage credentials from `.env.local` into the shell (gitignored for security).
 
 ### 3) Ensure Node.js is available
 

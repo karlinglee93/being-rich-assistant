@@ -51,20 +51,18 @@ setup_env() {
     loaded_vars+=("✓ GitHub MCP token")
   fi
 
-  # Check and export IBKR credentials (optional but recommended)
-  if [[ -n "${IBKR_API_KEY:-}" && -n "${IBKR_API_SECRET:-}" && -n "${IBKR_ACCOUNT_ID:-}" ]]; then
-    export IBKR_API_KEY
-    export IBKR_API_SECRET
-    export IBKR_ACCOUNT_ID
-    loaded_vars+=("✓ IBKR API credentials")
-  elif [[ -n "${IBKR_API_KEY:-}" || -n "${IBKR_API_SECRET:-}" || -n "${IBKR_ACCOUNT_ID:-}" ]]; then
-    echo "⚠️  Warning: Incomplete IBKR credentials in $LOCAL_ENV_FILE"
-    echo "   Please set IBKR_API_KEY, IBKR_API_SECRET, and IBKR_ACCOUNT_ID"
+  # Check and export Alpha Vantage credentials (optional but recommended)
+  if [[ -n "${ALPHA_VANTAGE_API_KEY:-}" ]]; then
+    export ALPHA_VANTAGE_API_KEY
+    loaded_vars+=("✓ Alpha Vantage API credentials")
+  elif [[ -n "${ALPHA_VANTAGE_BASE_URL:-}" ]]; then
+    echo "⚠️  Warning: Missing ALPHA_VANTAGE_API_KEY in $LOCAL_ENV_FILE"
+    echo "   Please set ALPHA_VANTAGE_API_KEY"
   fi
 
   if [[ ${#loaded_vars[@]} -eq 0 ]]; then
     echo "⚠️  No credentials found in $LOCAL_ENV_FILE"
-    echo "   Update it with GITHUB_PERSONAL_ACCESS_TOKEN and/or IBKR credentials"
+    echo "   Update it with GITHUB_PERSONAL_ACCESS_TOKEN and/or Alpha Vantage credentials"
     return 1
   fi
 
