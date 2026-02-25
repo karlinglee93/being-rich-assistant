@@ -76,6 +76,8 @@ Open docs:
 3. **Edit `.env.local`** (never commit this file):
    ```env
    ALPHA_VANTAGE_API_KEY=your_actual_api_key
+   ALPHA_VANTAGE_VERIFY_SSL=true
+   ALPHA_VANTAGE_ALLOW_INSECURE_SSL_FALLBACK=true
    FRONTEND_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
    GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token  # optional
    ```
@@ -86,6 +88,10 @@ Open docs:
    ```
    
    The app automatically loads variables from both `.env` and `.env.local` with `.env.local` taking precedence.
+
+   If your local Python environment cannot validate TLS certificates, keep
+   `ALPHA_VANTAGE_ALLOW_INSECURE_SSL_FALLBACK=true` (default) or set
+   `ALPHA_VANTAGE_VERIFY_SSL=false` to force insecure HTTPS for local development.
 
 ## UI Client (Next.js)
 

@@ -14,6 +14,11 @@ class Settings(BaseSettings):
         default="https://www.alphavantage.co/query",
         alias="ALPHA_VANTAGE_BASE_URL",
     )
+    alpha_vantage_verify_ssl: bool = Field(default=True, alias="ALPHA_VANTAGE_VERIFY_SSL")
+    alpha_vantage_allow_insecure_ssl_fallback: bool = Field(
+        default=True,
+        alias="ALPHA_VANTAGE_ALLOW_INSECURE_SSL_FALLBACK",
+    )
 
     model_config = SettingsConfigDict(
         env_file=".env",

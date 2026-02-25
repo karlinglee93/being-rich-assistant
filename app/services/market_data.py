@@ -11,6 +11,8 @@ class MarketDataService:
     def __init__(self):
         self.base_url = settings.alpha_vantage_base_url
         self.api_key = settings.alpha_vantage_api_key
+        self.verify_ssl = settings.alpha_vantage_verify_ssl
+        self.allow_insecure_ssl_fallback = settings.alpha_vantage_allow_insecure_ssl_fallback
 
     def _validate_credentials(self):
         """Validate that credentials are configured"""
@@ -22,8 +24,26 @@ class MarketDataService:
 
     def _fetch_alpha_vantage(self, params: dict[str, str]) -> dict:
         request_params = {**params, "apikey": self.api_key}
+
+        def _request(verify_ssl: bool):
+            return requests.get(
+                self.base_url,
+                params=request_params,
+                timeout=15,
+                verify=verify_ssl,
+            )
+
         try:
-            response = requests.get(self.base_url, params=request_params, timeout=15)
+            try:
+                response = _request(self.verify_ssl)
+            except requests.exceptions.SSLError as ssl_exc:
+                if not self.allow_insecure_ssl_fallback:
+                    raise
+                if self.verify_ssl:
+                    response = _request(False)
+                else:
+                    raise ssl_exc
+
             response.raise_for_status()
             payload = response.json()
             if not isinstance(payload, dict):
@@ -47,10 +67,19 @@ class MarketDataService:
             return payload
         except HTTPException:
             raise
+        except requests.exceptions.SSLError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=(
+                    "Failed TLS verification when connecting to Alpha Vantage API. "
+                    "Set ALPHA_VANTAGE_VERIFY_SSL=false in .env.local if your local "
+                    "Python certificate chain is unavailable."
+                ),
+            ) from exc
         except requests.RequestException as exc:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Failed to connect to Alpha Vantage API.",
+                detail=f"Failed to connect to Alpha Vantage API: {str(exc)}",
             ) from exc
 
     def get_latest_price(self, ticker: str) -> tuple[float, str | None]:
