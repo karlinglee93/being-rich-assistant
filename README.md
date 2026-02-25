@@ -44,6 +44,8 @@ Open docs:
 
 - Market data is fetched on demand (no DB/cache in this MVP).
 - Data source is `Alpha Vantage REST API`.
+- Uses free-tier Alpha Vantage endpoints (`GLOBAL_QUOTE`, `TIME_SERIES_DAILY` with `outputsize=compact`).
+- Historical queries are limited to the compact window (roughly last 100 trading days).
 - No local services required - pure HTTP API calls.
 - Requires a valid Alpha Vantage API key configured in `.env.local`.
 

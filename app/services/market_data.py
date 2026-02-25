@@ -112,9 +112,9 @@ class MarketDataService:
         try:
             data = self._fetch_alpha_vantage(
                 {
-                    "function": "TIME_SERIES_DAILY_ADJUSTED",
+                    "function": "TIME_SERIES_DAILY",
                     "symbol": normalized_ticker,
-                    "outputsize": "full",
+                    "outputsize": "compact",
                 }
             )
 
@@ -123,6 +123,16 @@ class MarketDataService:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail=f"No historical data for ticker {normalized_ticker} in requested range",
+                )
+
+            available_dates = sorted(date.fromisoformat(day) for day in series.keys())
+            if available_dates and start_date < available_dates[0]:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=(
+                        "Requested start_date is outside Alpha Vantage free-tier history window "
+                        "(compact response, last ~100 trading days)."
+                    ),
                 )
 
             records = []
@@ -137,7 +147,7 @@ class MarketDataService:
                         "High": float(bar.get("2. high", 0.0)),
                         "Low": float(bar.get("3. low", 0.0)),
                         "Close": float(bar.get("4. close", 0.0)),
-                        "Volume": int(float(bar.get("6. volume", 0))),
+                        "Volume": int(float(bar.get("5. volume", 0))),
                         "Date": pd.to_datetime(day),
                     }
                 )
