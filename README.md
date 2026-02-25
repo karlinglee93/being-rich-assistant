@@ -54,6 +54,7 @@ Open docs:
 ### File Structure
 - **`.env`** - Public configuration (safe to commit)
    - Contains default values for `APP_NAME`, `APP_VERSION`, `ALPHA_VANTAGE_BASE_URL`
+   - Can include `FRONTEND_ORIGINS` for browser CORS allowlist
   - Never contains secrets
   
 - **`.env.local`** - Local secrets (gitignored, never committed)
@@ -75,6 +76,7 @@ Open docs:
 3. **Edit `.env.local`** (never commit this file):
    ```env
    ALPHA_VANTAGE_API_KEY=your_actual_api_key
+   FRONTEND_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
    GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token  # optional
    ```
 
@@ -84,6 +86,21 @@ Open docs:
    ```
    
    The app automatically loads variables from both `.env` and `.env.local` with `.env.local` taking precedence.
+
+## UI Client (Next.js)
+
+The workspace includes a Next.js client in `../being-rich-assistant-client`.
+
+Run the client:
+
+```bash
+cd ../being-rich-assistant-client
+npm install
+echo "NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000" > .env.local
+npm run dev
+```
+
+Then open http://localhost:3000.
 
 ## Load Environment Variables in Shell
 

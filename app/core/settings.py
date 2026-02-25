@@ -5,6 +5,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = Field(default="Being Rich Assistant API", alias="APP_NAME")
     app_version: str = Field(default="0.1.0", alias="APP_VERSION")
+    frontend_origins: str = Field(
+        default="http://localhost:3000,http://127.0.0.1:3000",
+        alias="FRONTEND_ORIGINS",
+    )
     alpha_vantage_api_key: str = Field(default="", alias="ALPHA_VANTAGE_API_KEY")
     alpha_vantage_base_url: str = Field(
         default="https://www.alphavantage.co/query",
